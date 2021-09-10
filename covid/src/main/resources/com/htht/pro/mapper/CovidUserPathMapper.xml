@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.pro.mapper.CovidUserPathMapper">
+
+	<select id="getPageList" resultType="covid.CovidUserPath" parameterType="covid.CovidUserPath">
+		
+		SELECT 
+			c.path_id as "pathId",
+			c.user_id as "userId",
+			c.address_name as "addressName",
+			c.start_time as "startTime",
+			c.is_carry_virus as "isCarryVirus",
+			c.type as "type",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId",
+			cu.user_name as "userName",
+			cu.is_infect as "isInfect"
+	
+		FROM covid_user_path c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			and cu.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="isCarryVirus !=null and isCarryVirus !=''">
+			and c.is_carry_virus = #{isCarryVirus}
+		</if>
+		<if test="type !=null and type !=''">
+			and c.type = #{type}
+		</if>
+		<if test="addressName !=null and addressName !=''">
+			and c.address_name like CONCAT('%',#{addressName},'%')
+		</if>
+		ORDER BY c.create_time desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getPageListCount" resultType="int" parameterType="covid.CovidUserPath">
+		SELECT
+			count(1) as count
+		FROM covid_user_path c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			and cu.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="isCarryVirus !=null and isCarryVirus !=''">
+			and c.is_carry_virus = #{isCarryVirus}
+		</if>
+		<if test="type !=null and type !=''">
+			and c.type = #{type}
+		</if>
+		<if test="addressName !=null and addressName !=''">
+			and c.address_name like CONCAT('%',#{addressName},'%')
+		</if>
+	</select>
+	
+	<select id="getAppPageList" resultType="covid.CovidUserPath" parameterType="covid.CovidUserPath">
+		
+		SELECT 
+			c.path_id as "pathId",
+			c.user_id as "userId",
+			c.address_name as "addressName",
+			c.start_time as "startTime",
+			c.is_carry_virus as "isCarryVirus",
+			c.type as "type",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId",
+			cu.user_name as "userName",
+			cu.is_infect as "isInfect"
+	
+		FROM covid_user_path c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		WHERE 1=1
+		<if test="userId !=null and userId !=''">
+			and c.user_id = #{userId}
+		</if>
+		ORDER BY c.create_time desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getAppPageListCount" resultType="int" parameterType="covid.CovidUserPath">
+		SELECT
+			count(1) as count
+		FROM covid_user_path c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		WHERE 1=1
+		<if test="userId !=null and userId !=''">
+			and c.user_id = #{userId}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="String">
+		INSERT INTO 
+			covid_user_path (path_id,user_id,address_name,is_carry_virus,type,start_time,
+			create_time,create_user_id,update_time,update_user_id)
+		VALUES(
+			#{covidUserPath.pathId},#{covidUserPath.userId},#{covidUserPath.addressName},#{covidUserPath.isCarryVirus},#{covidUserPath.type},#{covidUserPath.startTime},
+			now(),#{covidUserPath.createUserId},now(),#{covidUserPath.updateUserId})
+	</insert>
+	
+</mapper>

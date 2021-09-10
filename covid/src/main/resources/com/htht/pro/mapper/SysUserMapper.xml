@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.pro.mapper.SysUserMapper">
+
+	<!-- query -->
+	<select id="getPageList" resultType="covid.SysUser" parameterType="covid.SysUser">
+		
+		SELECT 
+			user_id as "userId",
+			user_name as "userName",
+			password as "password",
+			real_name as "realName",
+			sex as "sex",
+			mobile as "mobile",
+			create_date as "createDate",
+			create_user_id as "createUserId"
+	
+		FROM sys_user su
+		WHERE 1=1
+		AND (su.user_name != 'admin')
+		<if test="userName!=null and userName!=''">
+			and su.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		ORDER BY create_date desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getPageListCount" resultType="int" parameterType="covid.SysUser">
+		SELECT
+			count(1) as count
+		FROM sys_user su
+		WHERE 1=1
+		AND (su.user_name != 'admin')
+		<if test="userName !=null and userName !=''">
+			and su.user_name like CONCAT('%',#{userName},'%')
+		</if>
+	</select>
+	
+	<!-- add -->
+	<insert id="add" parameterType="String">
+		INSERT INTO 
+			sys_user (user_id,user_name,password,real_name,
+			sex,mobile,create_date,create_user_id)
+		VALUES(
+			#{sysUser.userId},#{sysUser.userName},#{sysUser.password},#{sysUser.realName},
+			#{sysUser.sex},#{sysUser.mobile},now(),#{sysUser.createUserId})
+	</insert>
+	
+	<insert id="update" parameterType="String">
+	
+		update sys_user set 
+			user_name=#{sysUser.userName},
+			password = #{sysUser.password},
+			real_name = #{sysUser.realName},
+			sex= #{sysUser.sex},
+			mobile= #{sysUser.mobile}
+		where user_id=#{sysUser.userId}
+	</insert>
+	
+	<delete id="deleteUserById" parameterType="String">
+		delete from sys_user where user_id=#{userId}
+	</delete>
+	
+	<update id="updatePwd" parameterType="covid.SysUser">
+		update sys_user set password=#{password} where user_id=#{userId};
+	</update>
+	
+	<select id="findUserByUserName"  resultType="covid.SysUser" parameterType="covid.SysUser">
+		SELECT 
+			su.user_id as "userId",
+			su.user_name as "userName",
+			su.password as "password",
+			su.real_name as "realName",
+			su.sex as "sex",
+			su.mobile as "mobile",
+			su.create_date as "createDate",
+			su.create_user_id as "createUserId"
+	
+		FROM sys_user su
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			AND su.user_name = #{userName}
+		</if>
+		<if test="password !=null and password !=''">
+			AND su.password = #{password}
+		</if>
+	</select>
+	
+	<select id="findListByUserName"  resultType="covid.SysUser" parameterType="covid.SysUser">
+		SELECT 
+			su.user_id as "userId",
+			su.user_name as "userName",
+			su.password as "password",
+			su.real_name as "realName",
+			su.sex as "sex",
+			su.mobile as "mobile",
+			su.create_date as "createDate",
+			su.create_user_id as "createUserId"
+	
+		FROM sys_user su
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			AND su.user_name = #{userName}
+		</if>
+	</select>
+	
+	<select id="findListByUserId" resultType="covid.SysUser" parameterType="covid.SysUser">
+		SELECT 
+			su.user_id as "userId",
+			su.user_name as "userName",
+			su.password as "password",
+			su.real_name as "realName",
+			su.sex as "sex",
+			su.mobile as "mobile",
+			su.create_date as "createDate",
+			su.create_user_id as "createUserId"
+	
+		FROM sys_user su
+		WHERE 1=1
+		<if test="userId !=null and userId !=''">
+			AND su.user_id = #{userId}
+		</if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.pro.mapper.CovidMonitorMapper">
+
+	<select id="getPageList" resultType="covid.CovidMonitor" parameterType="covid.CovidMonitor">
+		
+		SELECT 
+			c.id as "id",
+			c.user_id as "userId",
+			c.address_id as "addressId",
+			c.start_time as "startTime",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId",
+			cu.user_name as "userName",
+			cu.is_infect as "isInfect",
+			ca.name as "addressName",
+			ca.lnglat as "lnglat"
+	
+		FROM covid_monitor c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		LEFT JOIN covid_address ca ON c.address_id = ca.address_id
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			and cu.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="addressId !=null and addressId !=''">
+			and c.address_id = #{addressId}
+		</if>
+		ORDER BY c.create_time desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getPageListCount" resultType="int" parameterType="covid.CovidMonitor">
+		SELECT
+			count(1) as count
+		FROM covid_monitor c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		LEFT JOIN covid_address ca ON c.address_id = ca.address_id
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			and cu.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="addressId !=null and addressId !=''">
+			and c.address_id = #{addressId}
+		</if>
+	</select>
+	
+	<select id="getAppPageList" resultType="covid.CovidMonitor" parameterType="covid.CovidMonitor">
+		
+		SELECT 
+			c.id as "id",
+			c.user_id as "userId",
+			c.address_id as "addressId",
+			c.start_time as "startTime",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId",
+			cu.user_name as "userName",
+			cu.is_infect as "isInfect",
+			ca.name as "addressName",
+			ca.lnglat as "lnglat"
+	
+		FROM covid_monitor c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		LEFT JOIN covid_address ca ON c.address_id = ca.address_id
+		WHERE 1=1
+		<if test="userId !=null and userId !=''">
+			and c.user_id = #{userId}
+		</if>
+		ORDER BY c.create_time desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getAppPageListCount" resultType="int" parameterType="covid.CovidMonitor">
+		SELECT
+			count(1) as count
+		FROM covid_monitor c
+		LEFT JOIN covid_user cu ON c.user_id = cu.user_id
+		LEFT JOIN covid_address ca ON c.address_id = ca.address_id
+		WHERE 1=1
+		<if test="userId !=null and userId !=''">
+			and c.user_id = #{userId}
+		</if>
+	</select>
+	
+	
+	<insert id="add" parameterType="String">
+		INSERT INTO 
+			covid_monitor (id,user_id,address_id,start_time,
+			create_time,create_user_id,update_time,update_user_id)
+		VALUES(
+			#{covidMonitor.id},#{covidMonitor.userId},#{covidMonitor.addressId},#{covidMonitor.startTime},
+			now(),#{covidMonitor.createUserId},now(),#{covidMonitor.updateUserId})
+	</insert>
+	
+	<delete id="deleteByUserId" parameterType="String">
+		delete from covid_monitor where user_id=#{userId}
+	</delete>
+	
+</mapper>

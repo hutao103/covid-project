@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.pro.mapper.CovidUserMapper">
+
+	<select id="getPageList" resultType="covid.CovidUser" parameterType="covid.CovidUser">
+		
+		SELECT 
+			c.user_id as "userId",
+			c.user_name as "userName",
+			c.password as "password",
+			c.is_infect as "isInfect",
+			c.nric as "nric",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+		FROM covid_user c
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			and c.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		ORDER BY c.create_time desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getPageListCount" resultType="int" parameterType="covid.CovidUser">
+		SELECT
+			count(1) as count
+		FROM covid_user c
+		WHERE 1=1
+		<if test="userName !=null and userName !=''">
+			and c.user_name like CONCAT('%',#{userName},'%')
+		</if>
+	</select>
+	
+	<!-- add -->
+	<insert id="add" parameterType="String">
+		INSERT INTO 
+			covid_user (user_id,user_name,password,is_infect,
+			nric,create_time,create_user_id,update_time,update_user_id)
+		VALUES(
+			#{covidUser.userId},#{covidUser.userName},#{covidUser.password},'0',
+			#{covidUser.nric},now(),#{covidUser.createUserId},now(),#{covidUser.updateUserId})
+	</insert>
+	
+	<!-- update -->
+	<update id="update" parameterType="String">
+		update covid_user set 
+			user_name=#{covidUser.userName},
+			password = #{covidUser.password},
+			is_infect = #{covidUser.isInfect},
+			nric = #{covidUser.nric},
+			update_time = now(),
+			update_user_id= #{covidUser.updateUserId}
+		where user_id=#{covidUser.userId};
+	</update>
+	
+	<select id="findListByNric" resultType="covid.CovidUser" parameterType="covid.CovidUser">
+		
+		SELECT 
+			c.user_id as "userId",
+			c.user_name as "userName",
+			c.password as "password",
+			c.is_infect as "isInfect",
+			c.nric as "nric",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+		FROM covid_user c
+		WHERE 1=1
+		<if test="nric !=null and nric !=''">
+			and c.nric = #{nric}
+		</if>
+	</select>
+	
+	<select id="findByUserId" resultType="covid.CovidUser" parameterType="covid.CovidUser">
+		
+		SELECT 
+			c.user_id as "userId",
+			c.user_name as "userName",
+			c.password as "password",
+			c.is_infect as "isInfect",
+			c.nric as "nric",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+		FROM covid_user c
+		WHERE 1=1
+		<if test="userId !=null and userId !=''">
+			and c.user_id = #{userId}
+		</if>
+	</select>
+	
+	<select id="findUserByNric"  resultType="covid.CovidUser" parameterType="covid.CovidUser">
+		SELECT 
+			c.user_id as "userId",
+			c.user_name as "userName",
+			c.password as "password",
+			c.is_infect as "isInfect",
+			c.nric as "nric",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+		FROM covid_user c
+		WHERE 1=1
+		<if test="nric !=null and nric !=''">
+			AND c.nric = #{nric}
+		</if>
+		<if test="password !=null and password !=''">
+			AND c.password = #{password}
+		</if>
+	</select>
+	
+</mapper>

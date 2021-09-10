@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.pro.mapper.CovidAddressMapper">
+
+	<select id="getPageList" resultType="covid.CovidAddress" parameterType="covid.CovidAddress">
+		
+		SELECT 
+			c.address_id as "addressId",
+			c.name as "name",
+			c.lnglat as "lnglat",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+	
+		FROM covid_address c
+		WHERE 1=1
+		<if test="name !=null and name !=''">
+			and c.name like CONCAT('%',#{name},'%')
+		</if>
+		ORDER BY c.create_time desc LIMIT ${(currentPageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getPageListCount" resultType="int" parameterType="covid.CovidAddress">
+		SELECT
+			count(1) as count
+		FROM covid_address c
+		WHERE 1=1
+		<if test="name !=null and name !=''">
+			and c.name like CONCAT('%',#{name},'%')
+		</if>
+	</select>
+	
+	<select id="findList" resultType="covid.CovidAddress" parameterType="covid.CovidAddress">
+		
+		SELECT 
+			c.address_id as "addressId",
+			c.name as "name",
+			c.lnglat as "lnglat",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+			
+	
+		FROM covid_address c
+		WHERE 1=1
+		ORDER BY c.create_time desc
+	</select>
+	
+	<select id="findListByName" resultType="covid.CovidAddress" parameterType="covid.CovidAddress">
+		
+		SELECT 
+			c.address_id as "addressId",
+			c.name as "name",
+			c.lnglat as "lnglat",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+			
+		FROM covid_address c
+		
+		WHERE 1=1
+		<if test="name !=null and name !=''">
+			and c.name = #{name}
+		</if>
+		ORDER BY c.create_time desc
+	</select>
+	
+	<select id="findListByAddressId" resultType="covid.CovidAddress" parameterType="covid.CovidAddress">
+		
+		SELECT 
+			c.address_id as "addressId",
+			c.name as "name",
+			c.lnglat as "lnglat",
+			c.create_time as "createTime",
+			c.create_user_id as "createUserId",
+			c.update_time as "updateTime",
+			c.update_user_id as "updateUserId"
+			
+		FROM covid_address c
+		
+		WHERE 1=1
+		<if test="addressId !=null and addressId !=''">
+			and c.address_id = #{addressId}
+		</if>
+		ORDER BY c.create_time desc
+	</select>
+	
+	<insert id="add" parameterType="String">
+		INSERT INTO 
+			covid_address (address_id,name,lnglat,
+			create_time,create_user_id,update_time,update_user_id)
+		VALUES(
+			#{covidAddress.addressId},#{covidAddress.name},#{covidAddress.lnglat},
+			now(),#{covidAddress.createUserId},now(),#{covidAddress.updateUserId})
+	</insert>
+	
+	<update id="update" parameterType="String">
+		update covid_address set 
+			name=#{covidAddress.name},
+			lnglat = #{covidAddress.lnglat},
+			update_time = now(),
+			update_user_id= #{covidAddress.updateUserId}
+		where address_id=#{covidAddress.addressId}
+	</update>
+	
+	<delete id="deleteByAddressId" parameterType="String">
+		delete from covid_address where address_id=#{addressId}
+	</delete>
+	
+</mapper>
